@@ -10,10 +10,12 @@ import {
   View,
 } from 'react-native';
 import React from 'react';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
+import {cartSlice} from '../redux/store/cartSlice.js';
 
 const ProductDetailsScreen = () => {
-  const productData = useSelector(state => state?.products?.selectedProduct);
+  const product = useSelector(state => state?.products?.selectedProduct);
+  const dispatch = useDispatch();
   const renderFlatItems = data => {
     return (
       <View style={styles.imageContainer}>
@@ -26,11 +28,15 @@ const ProductDetailsScreen = () => {
       </View>
     );
   };
+
+  const addCart = () => {
+    dispatch(cartSlice.actions.addCartItem({product}));
+  };
   return (
     <SafeAreaView style={styles.container}>
       {/* Image Carousel */}
       <FlatList
-        data={productData?.images}
+        data={product?.images}
         renderItem={renderFlatItems}
         showsHorizontalScrollIndicator={false}
         horizontal
@@ -39,18 +45,18 @@ const ProductDetailsScreen = () => {
       <ScrollView style={styles.scrollViewContainer}>
         {/* Title */}
 
-        <Text style={styles.titleText}>{productData?.name}</Text>
+        <Text style={styles.titleText}>{product?.name}</Text>
 
         {/* Price */}
 
-        <Text style={styles.priceText}>$ {productData?.price}</Text>
+        <Text style={styles.priceText}>$ {product?.price}</Text>
         {/* Description */}
 
-        <Text style={styles.descText}>{productData?.description}</Text>
+        <Text style={styles.descText}>{product?.description}</Text>
       </ScrollView>
       {/* Add to cart button */}
 
-      <Pressable style={styles.btnView}>
+      <Pressable style={styles.btnView} onPress={addCart}>
         <Text style={styles.btnText}>Add to Cart</Text>
       </Pressable>
 
@@ -103,7 +109,7 @@ const styles = StyleSheet.create({
   btnView: {
     backgroundColor: 'black',
     position: 'absolute',
-    bottom: height * 0.18,
+    bottom: height * 0.195,
     width: '90%',
     alignSelf: 'center',
     alignItems: 'center',

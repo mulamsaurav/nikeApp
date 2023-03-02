@@ -6,9 +6,12 @@ import Home from '../screens/Home.js';
 import ShoppingCart from '../screens/ShoppingCart.js';
 import ProductDetailsScreen from '../screens/ProductDetailsScreen.js';
 import Feather from 'react-native-vector-icons/Feather.js';
+import {useSelector} from 'react-redux';
+import {selectedAddtoCartItems} from '../redux/store/cartSlice.js';
 const Stack = createNativeStackNavigator();
 
 const AppNavigation = () => {
+  const numberOfItems = useSelector(selectedAddtoCartItems);
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -23,7 +26,7 @@ const AppNavigation = () => {
                 onPress={() => navigation.navigate('ShoppingCart')}
                 style={{flexDirection: 'row', justifyContent: 'center'}}>
                 <Feather name="shopping-cart" size={18} color="gray" />
-                <Text style={styles.cartItems}>1</Text>
+                <Text style={styles.cartItems}>{numberOfItems}</Text>
               </Pressable>
             ),
           })}
