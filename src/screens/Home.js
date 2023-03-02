@@ -7,16 +7,21 @@ import {
   Pressable,
 } from 'react-native';
 import React from 'react';
-import products from '../data/products.js';
+import {useSelector, useDispatch} from 'react-redux';
+import {productsSlice} from '../redux/store/productsSlice.js';
 
 const Home = ({navigation}) => {
+  const products = useSelector(state => state.products?.products);
+  const dispatch = useDispatch();
   const renderFlatItems = data => {
     return (
       <Pressable
         style={styles.imageContainer}
-        onPress={() =>
-          navigation.navigate('ProductDetailsScreen', {data: data.item})
-        }>
+        onPress={() => {
+          //update state and dispatch
+          dispatch(productsSlice.actions.setSelectedProduct(data.item.id));
+          navigation.navigate('ProductDetailsScreen');
+        }}>
         <Image
           source={{
             uri: data.item.image,

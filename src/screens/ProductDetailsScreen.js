@@ -10,19 +10,16 @@ import {
   View,
 } from 'react-native';
 import React from 'react';
-import {useRoute} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
 
 const ProductDetailsScreen = () => {
-  const route = useRoute();
-  const imageCourselData = route.params?.data?.images;
-  const productData = route.params?.data;
-
+  const productData = useSelector(state => state?.products?.selectedProduct);
   const renderFlatItems = data => {
     return (
       <View style={styles.imageContainer}>
         <Image
           source={{
-            uri: data.item,
+            uri: data?.item,
           }}
           style={styles.image}
         />
@@ -33,7 +30,7 @@ const ProductDetailsScreen = () => {
     <SafeAreaView style={styles.container}>
       {/* Image Carousel */}
       <FlatList
-        data={imageCourselData}
+        data={productData?.images}
         renderItem={renderFlatItems}
         showsHorizontalScrollIndicator={false}
         horizontal
@@ -106,7 +103,7 @@ const styles = StyleSheet.create({
   btnView: {
     backgroundColor: 'black',
     position: 'absolute',
-    bottom: height * 0.12,
+    bottom: height * 0.18,
     width: '90%',
     alignSelf: 'center',
     alignItems: 'center',
