@@ -1,5 +1,4 @@
 import {View, Text, StyleSheet, Image, SafeAreaView} from 'react-native';
-// import {Feather} from 'react-native-vector-icons';
 import Feather from 'react-native-vector-icons/Feather.js';
 
 const CartListItem = ({cartItem}) => {
