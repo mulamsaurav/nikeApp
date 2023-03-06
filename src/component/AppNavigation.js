@@ -8,6 +8,7 @@ import ProductDetailsScreen from '../screens/ProductDetailsScreen.js';
 import Feather from 'react-native-vector-icons/Feather.js';
 import {useSelector} from 'react-redux';
 import {selectedAddtoCartItems} from '../redux/store/cartSlice.js';
+import TrackOrder from '../screens/TrackOrder.js';
 const Stack = createNativeStackNavigator();
 
 const AppNavigation = () => {
@@ -21,6 +22,14 @@ const AppNavigation = () => {
           name="Home"
           component={Home}
           options={({navigation}) => ({
+            headerLeft: () => (
+              <Pressable
+                onPress={() => navigation.navigate('Track Order')}
+                style={{justifyContent: 'center'}}>
+                <Feather name="truck" size={18} color="gray" />
+              </Pressable>
+            ),
+
             headerRight: () => (
               <Pressable
                 onPress={() => navigation.navigate('ShoppingCart')}
@@ -37,6 +46,7 @@ const AppNavigation = () => {
           options={{presentation: 'modal'}}
         />
         <Stack.Screen name="ShoppingCart" component={ShoppingCart} />
+        <Stack.Screen name="Track Order" component={TrackOrder} />
       </Stack.Navigator>
     </NavigationContainer>
   );

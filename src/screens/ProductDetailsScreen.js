@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Dimensions,
   FlatList,
   Image,
@@ -12,9 +13,19 @@ import {
 import React from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {cartSlice} from '../redux/store/cartSlice.js';
+import {useGetProductQuery} from '../redux/store/apiSlice.js';
 
-const ProductDetailsScreen = () => {
-  const product = useSelector(state => state?.products?.selectedProduct);
+const ProductDetailsScreen = ({route}) => {
+  // const product = useSelector(state => state?.products?.selectedProduct);
+  const {data, isLoading, error} = useGetProductQuery(route?.params?.id);
+
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
+  if (error) {
+    return <Text>Error occur during fetching data {error.error}</Text>;
+  }
+  const product = data?.data;
   const dispatch = useDispatch();
   const renderFlatItems = data => {
     return (

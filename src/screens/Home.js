@@ -5,22 +5,38 @@ import {
   SafeAreaView,
   StyleSheet,
   Pressable,
+  ActivityIndicator,
+  Text,
 } from 'react-native';
 import React from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {productsSlice} from '../redux/store/productsSlice.js';
+import {useGetProductsQuery} from '../redux/store/apiSlice.js';
 
 const Home = ({navigation}) => {
-  const products = useSelector(state => state.products?.products);
-  const dispatch = useDispatch();
+  //redux
+  // const products = useSelector(state => state.products?.products);
+
+  // apicall using redux Query Toolkit
+  const {data, isLoading, error} = useGetProductsQuery();
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
+  if (error) {
+    return <Text>Error occur during fetching data {error.error}</Text>;
+  }
+  const products = data?.data;
+
+  // const dispatch = useDispatch();
   const renderFlatItems = data => {
     return (
       <Pressable
         style={styles.imageContainer}
         onPress={() => {
           //update state and dispatch
-          dispatch(productsSlice.actions.setSelectedProduct(data.item.id));
-          navigation.navigate('ProductDetailsScreen');
+          // dispatch(productsSlice.actions.setSelectedProduct(data.item._id));
+
+          navigation.navigate('ProductDetailsScreen', {id: data.item._id});
         }}>
         <Image
           source={{
@@ -28,7 +44,6 @@ const Home = ({navigation}) => {
           }}
           style={styles.image}
         />
-        {/* <Text>{data.item.name}</Text> */}
       </Pressable>
     );
   };
@@ -39,7 +54,7 @@ const Home = ({navigation}) => {
         data={products}
         renderItem={renderFlatItems}
         numColumns={2}
-        keyExtractor={item => item?.id}
+        keyExtractor={item => item?._id}
       />
     </SafeAreaView>
   );

@@ -1,19 +1,44 @@
-import {FlatList, Pressable, StyleSheet, Text, View} from 'react-native';
+import {Alert, FlatList, Pressable, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import CartListItem from '../component/CartListItem.js';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   sumOfSubtotal,
   selectDeliveryPrice,
   selectTotalPrice,
+  cartSlice,
 } from '../redux/store/cartSlice.js';
+import {useCreateOrderMutation} from '../redux/store/apiSlice.js';
 
 const ShoppingCart = () => {
+  const cartItems = useSelector(state => state?.cart?.items);
+  const dispatch = useDispatch();
+
+  console.log(cartItems);
+  const subtotal = useSelector(sumOfSubtotal);
+  const deliveryFee = useSelector(selectDeliveryPrice);
+  const totalFee = useSelector(selectTotalPrice);
+  const [createOrder, {data, isLoading, error}] = useCreateOrderMutation();
+  const onCreateOrder = async () => {
+    const result = await createOrder({
+      items: cartItems,
+      subtotal,
+      deliveryFee,
+      totalFee,
+    });
+
+    if (result.data?.status === 'OK') {
+      console.log(result.data);
+      Alert.alert(
+        'Order has been submitted',
+        `Your order reference is: ${result.data.data.ref}`,
+      );
+      dispatch(cartSlice.actions.clear());
+    }
+  };
+
   const shoppingCartFooterList = () => {
-    const subtotal = useSelector(sumOfSubtotal);
-    const deliveryFee = useSelector(selectDeliveryPrice);
-    const totalFee = useSelector(selectTotalPrice);
-    return (
+    return cartItems !== [] ? (
       <View style={styles.totalsContainer}>
         <View style={styles.row}>
           <Text style={styles.text}>Subtotal</Text>
@@ -28,18 +53,24 @@ const ShoppingCart = () => {
           <Text style={styles.textBold}>{totalFee} US$</Text>
         </View>
       </View>
-    );
+    ) : null;
   };
-  const cartItem = useSelector(state => state?.cart?.items);
   return (
     <>
       <FlatList
-        data={cartItem}
+        data={cartItems}
         renderItem={({item}) => <CartListItem cartItem={item} />}
         ListFooterComponent={shoppingCartFooterList}
+        ListEmptyComponent={() => (
+          <View>
+            <Text style={{alignSelf: 'center'}}>
+              You don't have any product
+            </Text>
+          </View>
+        )}
       />
       <View style={styles.footer}>
-        <Pressable style={styles.button}>
+        <Pressable style={styles.button} onPress={() => onCreateOrder()}>
           <Text style={styles.buttonText}>Checkout</Text>
         </Pressable>
       </View>
